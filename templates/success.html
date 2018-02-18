@@ -1,0 +1,29 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Success</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}">
+
+
+</head>
+<body>
+<div id="navdiv">
+<ul>
+  <li><a href="/" id="nav">F&#38;C</a></li>
+  <li><a href="/order" class="active" id="nav">Order</a></li>
+  <li><a href="/locate" id="nav">Locate</a></li>
+  <li><a href="/about" id="nav">About us</a></li>
+</ul>
+</div>
+<div class="container">	
+<h2>Thank You </h2>
+<div id="centerdiv">
+<img src="/static/success.png" width="10%"/>
+<p>You order has been successfully placed. Please collect your order at the collection counter.</p>
+<h2>Order ID:</h2>
+<h2>{{ datapython }}</h2>
+</div>
+</div>
+</body>
+</html>

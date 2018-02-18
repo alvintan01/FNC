@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<title>Order</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}">
+</head>
+<body> 
+<div id="navdiv">
+<ul>
+  <li><a href="/" id="nav">F&#38;C</a></li>
+  <li><a href="/order" class="active" id="nav">Order</a></li>
+  <li><a href="/locate" id="nav">Locate</a></li>
+  <li><a href="/about" id="nav">About us</a></li>
+</ul>
+</div>
+<div class="container">	
+<h2>Choose your Beverage > </h2>
+<table>
+{%- for name, description, imagelocation in datapython %}
+<form action="vieworder" method="POST">
+<div class="card">
+  <input type="hidden" name="drinks" value="{{ name }}">
+  <img src="{{ imagelocation }}" style="width:100%">
+  <div class="container">
+    <h4><b>{{ name }}</b></h4> 
+	<div id="description">
+    <p>{{ description }}</p> 
+	</div>
+  </div>
+  <input type="submit" class="buttonOrder" value="Select"/>
+</div>
+</form>
+{%- endfor %}
+<div id="centerdiv">
+	<form action="vieworder" method="POST">
+	<br><br>
+    <input type="hidden" name="drinks" value="">
+    <input type="submit" class="buttonOrder1" value="Skip">
+	</form>
+</div>
+</div>
+</table>
+</body>
+</html>

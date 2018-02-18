@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<title>Order</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}">
+<script>
+function validateFood() {
+    var x = document.forms["updatefood"]["foodquantity"].value;
+    if (x < 1) {
+        alert("Quantity must be greater than 0.");
+        return false;
+    }
+}
+function validateSide() {
+    var x = document.forms["updateside"]["sidequantity"].value;
+    if (x < 1) {
+        alert("Quantity must be greater than 0.");
+        return false;
+    }
+}
+function validateDrink() {
+    var x = document.forms["updatedrink"]["drinkquantity"].value;
+    if (x < 1) {
+        alert("Quantity must be greater than 0.");
+        return false;
+    }
+}
+</script>
+</head>
+<body> 
+<div id="navdiv">
+<ul>
+  <li><a href="/" id="nav">F&#38;C</a></li>
+  <li><a href="/order" class="active" id="nav">Order</a></li>
+  <li><a href="/locate" id="nav">Locate</a></li>
+  <li><a href="/about" id="nav">About us</a></li>
+</ul>
+</div>
+	<div class="container">	
+		<h2>Order Confirmation</h2>
+			<table id="table" class="display">
+				<thead>
+				      <tr>
+						<th>Item No.</th>
+				        <th>Food</th>
+				        <th>Food Quantity</th>
+				        <th>Sides</th>
+				        <th>Sides Quantity</th>
+				        <th>Drink</th>
+				        <th>Drink Quantity</th>
+						<th>Cost</th>
+					<th>Actions</th>
+				      </tr>
+				</thead>
+				<tbody>				
+				{%- for id, food, foodquantity, sides, sidequantity, drink, drinkquantity, rowid, cost in datapython %}
+				<tr>
+				<td>{{ id }}</td>
+				{% if food !="" %}
+				<td>{{ food }}</td>
+				<td><form action="updateorder" id="updatefood" method="post" onsubmit="return validateFood()"><input type="number" onchange='this.form.submit()' name="foodquantity" min="1" value="{{ foodquantity }}"><input type="hidden" name="rowid" value="{{ rowid }}"><input type="hidden" name="operation" value="updatefoodquantity"></form></td>
+				{% else %}
+				<td>N.A.</td>
+				<td>N.A.</td>
+				{% endif %}
+				{% if sides !="" %}
+				<td>{{ sides }}</td>
+				<td><form action="updateorder" id="updateside" method="post" onsubmit="return validateSide()"><input type="number" onchange='this.form.submit()' name="sidequantity" min="1" value="{{ sidequantity }}"><input type="hidden" name="rowid" value="{{ rowid }}"><input type="hidden" name="operation" value="updatesidequantity"></form></td>				
+				{% else %}
+				<td>N.A.</td>
+				<td>N.A.</td>
+				{% endif %}
+				{% if drink !="" %}
+				<td>{{ drink }}</td>
+				<td><form action="updateorder" id="updatedrink" method="post" onsubmit="return validateDrink()"><input type="number" onchange='this.form.submit()' name="drinkquantity" min="1" value="{{ drinkquantity }}"><input type="hidden" name="rowid" value="{{ rowid }}"><input type="hidden" name="operation" value="updatedrinkquantity"></form></td>
+				{% else %}
+				<td>N.A.</td>
+				<td>N.A.</td>
+				{% endif %}
+				<td>${{ cost }}</td>			
+				<td><form action="updateorder" method="post"><input type="hidden" name="rowid" value="{{ rowid }}"><input type="hidden" name="operation" value="delete"><input type="submit" class="buttonOrder1" value="Delete"></form></td>				
+				</tr>
+				{%- endfor %}
+				</tbody>
+			</table>
+		<div id="centerdiv">
+		<table>
+		<form action="order"><input type="submit" class="buttonOrder1" value="Add Another Order"></form>&emsp;&emsp;&emsp;
+		<form action="makepayment"><input type="submit" class="buttonOrder1" value="Place Order"></form>
+		</table>
+		</div>
+	</div>
+</body>
+</html>	

@@ -1,0 +1,30 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Payment</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}">
+</head>
+<body>
+<div id="navdiv">
+<ul>
+  <li><a href="/" id="nav">F&#38;C</a></li>
+  <li><a href="/order" class="active" id="nav">Order</a></li>
+  <li><a href="/locate" id="nav">Locate</a></li>
+  <li><a href="/about" id="nav">About us</a></li>
+</ul>
+</div>
+<div class="container">
+<h2>Make your payment > </h2>
+<div id="centerdiv">
+<img src="/static/nfc.png" width="20%"/>
+<p>Please tap your card to make payment.</p>
+<h2>Total amount:</h2>
+<h2>{{ datapython }}</h2>
+</div>
+</div>
+<script type="text/javascript">
+    window.location = "scancard";
+</script>
+</body>
+</html>

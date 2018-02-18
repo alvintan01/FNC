@@ -1,0 +1,19 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta http-equiv="refresh" content="3" >
+<meta charset="utf-8" />
+<title>Temperature</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}">
+</head>
+<body>
+<div class="container">
+<div id="centerdiv">
+<img src="/static/thermometer.png" width="20%"/>
+<h2>Current Temperature at F&C </h2>
+<h2>Drink Station: {{ datapython[0] }} Degree Celsius</h2>
+<h2>Kitchen: {{ datapython[1] }} Degree Celsius</h2>
+</div>
+</div>
+</body>
+</html>

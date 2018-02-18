@@ -1,0 +1,61 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Order History</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.dataTables.min.css') }}">
+<script src="{{ url_for('static', filename='jquery-1.12.4.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.dataTables.min.js') }}"></script> 
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}">
+<script>
+$(document).ready(function() {
+    $('table.display').DataTable();
+} );
+</script>
+</head>
+<body>
+<div id="navdiv">
+<ul>
+  <li><a id="nav">F&#38;C</a></li>  
+  <li><a href="/profit" id="nav">Profit</a></li>
+  <li><a href="/history" class="active" id="nav">Order History</a></li>
+  <li><a href="/count" id="nav">Traffic</a></li>
+  <li><a href="/firealarm" id="nav">Fire Alarm</a></li>
+  <li><a href="/logout" id="logout">Logout</a></li>
+</ul>
+</div>
+<div class="container">	
+<h2>Order History > </h2>
+<table class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Time</th>
+				<th>OrderID</th>
+				<th>Food</th>
+				<th>Food Quantity</th>
+				<th>Sides</th>
+				<th>Sides Quantity</th>
+				<th>Drink</th>
+				<th>Drink Quantity</th>
+				<th>Profit</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for timestamp, orderid, food, foodquantity, sides, sidesquantity, drink, drinkquantity, profit in datapython %}
+        	<tr>
+            		<td>{{ timestamp }}</td>
+					<td>{{ orderid }}</td>
+					<td>{{ food }}</td>
+					<td>{{ foodquantity }}</td>
+					<td>{{ sides }}</td>
+					<td>{{ sidesquantity }}</td>
+					<td>{{ drink }}</td>
+					<td>{{ drinkquantity }}</td>
+					<td>{{ profit }}</td>
+       		 </tr>
+    	{% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

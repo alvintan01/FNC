@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<head>
+<title>Profit</title>
+<meta http-equiv="refresh" content="300"/>
+    <script type="text/javascript" src="https://code.jquery.com/jquery3.2.1.js"></script> 
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script> 
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}">
+    <script type="text/javascript"> 
+	google.load('visualization', '1', {'packages':['corechart']}); 
+	google.setOnLoadCallback(drawChart); 
+	function drawChart() { 
+		var data = new google.visualization.DataTable();
+		data.addColumn('string', 'Hour')
+		data.addColumn('number','Profit');
+		data.addRows([
+			{%- for timeinfo, valueinfo in datapython %}
+				['{{ timeinfo }}', {{valueinfo}}],
+			{%- endfor %}
+		]);
+
+		var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+		chart.draw(data, {title: 'Profit for the day ', legend: 'none', hAxis: {title: 'Hour (24Hr Format)'}, vAxis: {baseline: 0, title: 'Profit', format: '#'}, colors: ['#A0D100']});
+	}
+	</script>
+	<script>
+		$(document).ready(function(){
+			setInterval(function(){
+				location.reload();
+				//drawChart();
+			},3000);
+		});
+	</script>
+ 
+<script>
+ function turnon(){
+ $.ajax({url: "writeLED/On",
+ success: function(result){
+ $("#status").html(result);
+ }
+ })
+ }
+
+
+ function turnoff(){
+ $.ajax({url: "writeLED/Off",
+ success: function(result){
+ $("#status").html(result);
+ }
+ })
+ }
+
+ </script>
+ </head>
+ <body>
+
+<div id="navdiv">
+<ul>
+  <li><a id="nav">F&#38;C</a></li>  
+  <li><a href="/profit" class="active" id="nav">Profit</a></li>
+  <li><a href="/history" id="nav">Order History</a></li>
+  <li><a href="/count" id="nav">Traffic</a></li>
+  <li><a href="/firealarm" id="nav">Fire Alarm</a></li>
+  <li><a href="/logout" id="logout">Logout</a></li>
+</ul>
+</div>
+<a href="/logout" id="logout">Logout</a>
+<div class="container">
+		<h2>Profit for the day</h2>
+		<div id="chart_div"></div>
+		<div id="centerdiv">
+			<table id="profittable" class="display" cellspacing="0" width="50%">
+				<tr>
+				<th>Hour</th>
+				<th>Profit</th>
+				</tr>
+				{%- for timeinfo, valueinfo in datapython %}
+				<tr>
+				<td>{{ timeinfo }}</td><td>${{valueinfo}}</td>
+				</tr>
+			{%- endfor %}
+			</table>
+		</div>
+	</div>
+
+</body>
+</html>

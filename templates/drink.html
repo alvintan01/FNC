@@ -1,0 +1,37 @@
+<!doctype html> 
+<head> 
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.dataTables.min.css') }}">
+<script src="{{ url_for('static', filename='jquery-1.12.4.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.dataTables.min.js') }}"></script> 
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}">
+<script>
+$(document).ready(function() {
+    $('table.display').DataTable();
+} );
+</script>
+    <meta http-equiv="refresh" content="1" >
+    <title>Drink Orders</title> 
+</head>
+<body>
+	<div class="container">	
+		<h1>Drink Orders</h1>
+			<table class="display" cellspacing="0" width="100%">
+				<thead>
+				      <tr>
+					<th>Order ID</th>
+				        <th>Drink</th>
+					<th>Quantity</th>
+				        <th>Timestamp</th>
+				      </tr>
+				</thead>
+				<tbody>				
+				{%- for orderid, drink, drinkquantity, time in datapython %}
+				<tr>
+				<td>{{ orderid }}</td><td>{{ drink }}</td><td>{{ drinkquantity }}</td><td>{{ time }}</td>
+				</tr>
+				{%- endfor %}
+				</tbody>
+			</table>
+	</div>
+</body>
+</html>	
