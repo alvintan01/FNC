@@ -11,7 +11,7 @@ You will need a AWS Cloud account as well as 3 Raspberry Pi including a RFID rea
 ![alt text](screenshots/secondandthirdpi.png)
 
 ## Configurations
-You will need to create 5 tables in DynamoDB. They are food, drinks, sides, users and orders. The food, drinks and sides table will have id as the primary key. The users table will have username as the primary key. The orders table will have timestamp as the primary key. The table food, drinks and sides is to store the description of each of the item. The users table is used to store the username and hashed password of the admin. The orders table is used to store all the orders placed.<br />
+You will need to create 5 tables in DynamoDB. They are food, drinks, sides, users and orders. The food, drinks and sides table will have id as the primary key. The users table will have username as the primary key. The orders table will have timestamp as the primary key. The table food, drinks and sides is to store the description of each of the item. The users table is used to store the username and hashed password of the admin. The orders table is used to store all the orders placed. Note that you would need to run the `aws configure` command and enter your credentials.<br />
 
 You will also need to create an IOT Rule to insert the orders sent by MQTT to the orders table in DynamoDB. Also, you will need to create 1 more IOT rule to send the email in the event of fire. A lambda function is also required to split the order to the kitchen and drink station. The function is shown in `lamdafunction.py`.
 
