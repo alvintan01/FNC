@@ -1,0 +1,22 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta http-equiv="refresh" content="3" >
+<meta charset="utf-8" />
+<title>Collection</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}">
+</head>
+<body>
+<div class="container">
+<div id="centerdiv">
+<h1>F&C</h1>
+<h2>Currently Serving:</h2>
+<h2>{{ datapython[0] }}</h2>
+<h3>Past Order ID:</h3>
+	{%- for orderid in datapython[1] %}
+		<h3>{{ orderid  }}</h3>
+	{%- endfor %}
+</div>
+</div>
+</body>
+</html>
