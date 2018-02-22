@@ -11,7 +11,7 @@ You will need a AWS Cloud account as well as 3 Raspberry Pi including a RFID rea
 ![alt text](screenshots/secondandthirdpi.png)
 
 ## Configurations
-You will need to create 5 tables in DynamoDB. They are food, drinks, sides, users and orders. The food, drinks and sides table will have id as the primary key. The users table will have username as the primary key. The orders table will have timestamp as the primary key. The table food, drinks and sides is to store the description of each of the item. The users table is used to store the username and hashed password of the admin. The orders table is used to store all the orders placed. Note that you would need to run the `aws configure` command and enter your credentials.<br />
+You will need to create 7 tables in DynamoDB. They are food, drinks, sides, users, orders, foodpreparationtime and drinkpreparationtime. The food, drinks and sides table will have id as the primary key. The users table will have username as the primary key. The orders table will have timestamp as the primary key. The table food, drinks and sides is to store the description of each of the item. The users table is used to store the username and hashed password of the admin. The orders table is used to store all the orders placed. The foodpreparationtime and drinkpreparationtime will have timestamp as the primary key and would be used to store the time taken to complete an order. Note that you would need to run the `aws configure` command and enter your credentials.<br />
 
 You will also need to create an IOT Rule to insert the orders sent by MQTT to the orders table in DynamoDB. Also, you will need to create 1 more IOT rule to send the email in the event of fire. A lambda function is also required to split the order to the kitchen and drink station. The function is shown in `lamdafunction.py`.
 
@@ -21,6 +21,7 @@ You will also need to create a table in the local MySQL of 2 Raspberry Pi. It wi
 
 There are mainly 5 python scripts. <br />
 `adminserver.py` - Used to manage the admin webpage. It is connected to the DynamoDB database to authenticate admin credentials, show graph of profit, number of orders and table for order history. It also subscribes to MQTT topics, to display the temperature of the kitchen and the drink station as well as the fire alarm status.<br />
+`collection.py` - To run the flask server to let users know the current orderid being served.<br />
 `drinkclient.py` - For drink station staff to view drink orders that are subscribed to the MQTT topics which is inserted into the local MySQL database. It also allows the staff to remove the order once completed and also to sends the temperature of the station.<br />
 `firestation.py` - To run the flask server and subscribe to MQTT topics to let the staff at the fire station to view the temperature of the kitchen and drink station.<br />
 `foodclient.py` - For kitchen staff to view drink orders that are subscribed to the MQTT topics which is inserted into the local MySQL database. It also allows the staff to remove the order once completed and also to sends the temperature of the station.<br />
