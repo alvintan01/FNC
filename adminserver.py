@@ -12,7 +12,6 @@ import threading
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 from gpiozero import Buzzer
 
-bz = Buzzer(26)
 kitchentemp = 25.0
 drinktemp = 25.0
 kitchenalarm = False
@@ -67,6 +66,8 @@ sleep(2)
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('orders')
 usertable = dynamodb.Table('users')
+foodpreparationtimetable = dynamodb.Table('foodpreparationtime')
+drinkpreparationtimetable = dynamodb.Table('drinkpreparationtime')
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -80,7 +81,7 @@ def login():
         for a in item:
             if request.form['username']==a['username'] and hashlib.md5(request.form['password']).hexdigest()==a['password']:
                 session['user']=request.form['username']
-                return redirect("/profit")
+                return redirect("/revenue")
             else:
                 error = "Invalid username or password!"
     return render_template("login.html", datapython=error)
@@ -110,8 +111,8 @@ def addtodict(key, value, profitdict):
     else:
         profitdict[key]=value
             
-@app.route("/profit")
-def profit():
+@app.route("/revenue")
+def revenue():
     if 'user' in session:
         data=[]
         profit = {'00:00':0,'01:00':0,'02:00':0,'03:00':0,'04:00':0,'05:00':0,'06:00':0,'07:00':0,'08:00':0,'09:00':0,'10:00':0,'11:00':0,'12:00':0,'13:00':0,'14:00':0,'15:00':0,'16:00':0,'17:00':0,'18:00':0,'19:00':0,'20:00':0,'21:00':0,'22:00':0,'23:00':0}
@@ -129,7 +130,9 @@ def profit():
         now = datetime.datetime.now()
         sorteddata=data[now.hour+1:]
         sorteddata+=data[:now.hour+1]
-        return render_template("profit.html", datapython=sorteddata)
+        sorteddata2=data[now.hour:]
+        sorteddata2+=data[:now.hour]
+        return render_template("revenue.html", datapython=[sorteddata,sorteddata2])
     else:
         return redirect("/")
 
@@ -152,7 +155,9 @@ def count():
         now = datetime.datetime.now()
         sorteddata=data[now.hour+1:]
         sorteddata+=data[:now.hour+1]
-        return render_template("count.html", datapython=sorteddata)
+        sorteddata2=data[now.hour:]
+        sorteddata2+=data[:now.hour]
+        return render_template("count.html", datapython=[sorteddata,sorteddata2])
     else:
         return redirect("/")
 
@@ -163,7 +168,6 @@ def firealarm():
     global kitchenalarm
     global drinkalarm
     if 'user' in session:
-        global firealarm
         return render_template("fire.html", datapython=[kitchentemp, drinktemp, kitchenalarm, drinkalarm])
     else:
         return redirect("/")
@@ -221,6 +225,67 @@ def drinkon():
         send_message = {'alarm':drinkalarm}
         my_rpi.publish("firealarm/drink", json.dumps(send_message), 1)
         return render_template("fire.html", datapython=[kitchentemp, drinktemp, kitchenalarm, drinkalarm])
+    else:
+        return redirect("/")
+
+@app.route("/foodpreparationtime")
+def foodpreparationtime():
+    if 'user' in session:
+        data=[]
+        count = {'00:00':0,'01:00':0,'02:00':0,'03:00':0,'04:00':0,'05:00':0,'06:00':0,'07:00':0,'08:00':0,'09:00':0,'10:00':0,'11:00':0,'12:00':0,'13:00':0,'14:00':0,'15:00':0,'16:00':0,'17:00':0,'18:00':0,'19:00':0,'20:00':0,'21:00':0,'22:00':0,'23:00':0}
+        preparationtime = {'00:00':0,'01:00':0,'02:00':0,'03:00':0,'04:00':0,'05:00':0,'06:00':0,'07:00':0,'08:00':0,'09:00':0,'10:00':0,'11:00':0,'12:00':0,'13:00':0,'14:00':0,'15:00':0,'16:00':0,'17:00':0,'18:00':0,'19:00':0,'20:00':0,'21:00':0,'22:00':0,'23:00':0}
+        response = foodpreparationtimetable.scan()
+        item = response['Items']
+        for a in item:
+            d = datetime.datetime.strptime(a['timestamp'], '%Y-%m-%d %H:%M:%S.%f').replace(microsecond=0,second=0,minute=0)
+            stringdate = d.strftime('%H:%M')
+            if d > datetime.datetime.today() + datetime.timedelta(days = -1):
+                addtodict(stringdate, int(a['time']), preparationtime)
+                addtodict(stringdate, 1, count)
+        for b in sorted(preparationtime):
+            if count[b] != 0:
+                data.append([b, (preparationtime[b]/count[b])])
+            else:
+                data.append([b, preparationtime[b]])
+
+        #to show the time now at the end
+        now = datetime.datetime.now()
+        sorteddata=data[now.hour+1:]
+        sorteddata+=data[:now.hour+1]
+        sorteddata2=data[now.hour:]
+        sorteddata2+=data[:now.hour]
+        return render_template("foodpreparationtime.html", datapython=[sorteddata,sorteddata2])
+    else:
+        return redirect("/")
+
+@app.route("/drinkpreparationtime")
+def drinkpreparationtime():
+    if 'user' in session:
+        data=[]
+        count = {'00:00':0,'01:00':0,'02:00':0,'03:00':0,'04:00':0,'05:00':0,'06:00':0,'07:00':0,'08:00':0,'09:00':0,'10:00':0,'11:00':0,'12:00':0,'13:00':0,'14:00':0,'15:00':0,'16:00':0,'17:00':0,'18:00':0,'19:00':0,'20:00':0,'21:00':0,'22:00':0,'23:00':0}
+        preparationtime = {'00:00':0,'01:00':0,'02:00':0,'03:00':0,'04:00':0,'05:00':0,'06:00':0,'07:00':0,'08:00':0,'09:00':0,'10:00':0,'11:00':0,'12:00':0,'13:00':0,'14:00':0,'15:00':0,'16:00':0,'17:00':0,'18:00':0,'19:00':0,'20:00':0,'21:00':0,'22:00':0,'23:00':0}
+        response = drinkpreparationtimetable.scan()
+        item = response['Items']
+        for a in item:
+            d = datetime.datetime.strptime(a['timestamp'], '%Y-%m-%d %H:%M:%S.%f').replace(microsecond=0,second=0,minute=0)
+            stringdate = d.strftime('%H:%M')
+            if d > datetime.datetime.today() + datetime.timedelta(days = -1):
+                addtodict(stringdate, int(a['time']), preparationtime)
+                addtodict(stringdate, 1, count)
+        for b in sorted(preparationtime):
+            if count[b] != 0:
+                data.append([b, (preparationtime[b]/count[b])])
+            else:
+                data.append([b, preparationtime[b]])
+
+
+        #to show the time now at the end
+        now = datetime.datetime.now()
+        sorteddata=data[now.hour+1:]
+        sorteddata+=data[:now.hour+1]
+        sorteddata2=data[now.hour:]
+        sorteddata2+=data[:now.hour]
+        return render_template("drinkpreparationtime.html", datapython=[sorteddata,sorteddata2])
     else:
         return redirect("/")
 

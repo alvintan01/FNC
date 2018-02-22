@@ -1,3 +1,4 @@
+import boto3
 from flask import Flask, render_template, request
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 from time import sleep
@@ -6,11 +7,16 @@ from gpiozero import Button, Buzzer
 import MySQLdb
 import Adafruit_DHT
 import threading
+import datetime
+
+dynamodb = boto3.resource('dynamodb')
+drinkpreparationtime = dynamodb.Table('drinkpreparationtime')
 
 button = Button(13, pull_up=False)
 bz = Buzzer(26)
 timestamp = ""
 firealarm = False
+currentorderid = ""
 
 try:
     db = MySQLdb.connect("localhost", "ca2user", "password", "orders")
@@ -27,7 +33,7 @@ def customCallback(client, userdata, message):
 	j = json.loads(message.payload)
         db = MySQLdb.connect("localhost", "ca2user", "password", "orders")
         curs = db.cursor()
-	sql = "INSERT into drinkorders VALUES ('"+str(j['orderid'])+"','"+str(j['drink'])+"','"+str(j['drinkquantity'])+"','"+str(j['timestamp'])+"',False)"
+	sql = "INSERT into drinkorders VALUES ('"+str(j['orderid'])+"','"+str(j['drink'])+"','"+str(j['drinkquantity'])+"', NOW(),False)"
         curs.execute(sql)
         db.commit()
         curs.close()
@@ -37,18 +43,6 @@ def customCallback2(client, userdata, message):
     global firealarm
     j = json.loads(message.payload)
     firealarm = j['alarm']
-
-def deleteOrder():
-        global timestamp
-        db = MySQLdb.connect("localhost", "ca2user", "password", "orders")
-        curs = db.cursor()
-        sql = "Update drinkorders set completed=True where timestamp='"+timestamp+"'"
-        curs.execute(sql)
-        db.commit()
-        curs.close()
-        db.close()
-		
-button.when_pressed = deleteOrder
 
 host = "a1gshwfs8ne6l4.iot.us-west-2.amazonaws.com"
 rootCAPath = "rootca.pem"
@@ -72,7 +66,26 @@ my_rpi.subscribe("firealarm/drink", 1, customCallback2)
 
 app = Flask(__name__)
 
-
+def deleteOrder():
+        global timestamp
+        global currentorderid
+        db = MySQLdb.connect("localhost", "ca2user", "password", "orders")
+        curs = db.cursor()
+        sql = "Update drinkorders set completed=True where timestamp='"+timestamp+"'"
+        curs.execute(sql)
+        db.commit()
+        sql = "Select * from drinkorders where completed = False and orderid = '"+currentorderid+"'"
+        curs.execute(sql)        
+        if curs.rowcount == 0 and currentorderid!="":
+              my_rpi.publish("orders/drinkcompleted", json.dumps({'orderid': currentorderid}), 1)
+              currentorderid=""
+        curs.close()
+        db.close()
+        drinkpreparationtime.put_item(
+                Item={'timestamp':timestamp, 'time':int((datetime.datetime.now()-datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")).total_seconds())}
+        )
+		
+button.when_pressed = deleteOrder
 
 # Publish to the same topic in a loop forever
 def run():
@@ -117,15 +130,17 @@ except Exception as e:
 @app.route("/")
 def drink():
         global timestamp
+        global currentorderid
         db = MySQLdb.connect("localhost", "ca2user", "password", "orders")
         curs = db.cursor()
-        sql = "Select * from drinkorders where completed = False order by orderid"
+        sql = "Select * from drinkorders where completed = False order by timestamp"
         curs.execute(sql)
         data = []
         timeset = False
         for (orderid, drink, drinkquantity, ordertimestamp, completed) in curs:
                 if not timeset:
                         timestamp=ordertimestamp
+                        currentorderid=orderid
                         timeset = True
                 data.append([orderid,drink,drinkquantity, ordertimestamp])
         curs.close()
