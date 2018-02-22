@@ -30,26 +30,6 @@
 			},3000);
 		});
 	</script>
- 
-<script>
- function turnon(){
- $.ajax({url: "writeLED/On",
- success: function(result){
- $("#status").html(result);
- }
- })
- }
-
-
- function turnoff(){
- $.ajax({url: "writeLED/Off",
- success: function(result){
- $("#status").html(result);
- }
- })
- }
-
- </script>
  </head>
  <body>
 
