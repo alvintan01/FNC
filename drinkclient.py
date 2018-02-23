@@ -77,7 +77,7 @@ def deleteOrder():
         sql = "Select * from drinkorders where completed = False and orderid = '"+currentorderid+"'"
         curs.execute(sql)        
         if curs.rowcount == 0 and currentorderid!="":
-              my_rpi.publish("orders/drinkcompleted", json.dumps({'orderid': currentorderid}), 1)
+              my_rpi.publish("order/drinkcompleted", json.dumps({'orderid': currentorderid}), 1)
               currentorderid=""
         curs.close()
         db.close()

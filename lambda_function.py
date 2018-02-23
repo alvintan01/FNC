@@ -20,6 +20,13 @@ def lambda_handler(event, context):
                         qos=1,
                         payload=json.dumps(send_msg)
                 )
+                if event['drink']!="":
+                        response = client.publish(
+                        topic="order/drinkcompleted",
+                        qos=1,
+                        payload=json.dumps({'orderid': event['orderid']})
+                        )
+                        
         
         if event['drink']!="":
                 send_msg = {
@@ -32,5 +39,11 @@ def lambda_handler(event, context):
                         topic="order/drink",
                         qos=1,
                         payload=json.dumps(send_msg)
+                        )
+                if event['food']!="":
+                        response = client.publish(
+                        topic="order/foodcompleted",
+                        qos=1,
+                        payload=json.dumps({'orderid': event['orderid']})
                         )
         return msg

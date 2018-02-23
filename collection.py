@@ -3,12 +3,17 @@ from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 from time import sleep
 from gpiozero import Buzzer
 import json
+from rpi_lcd import LCD
 
 foodorderid=[]
 drinkorderid=[]
 currentorderid=""
 pastservedorderid=[]
 bz = Buzzer(26)
+lcd = LCD()
+lcd.text('Serving:', 1)
+lcd.text('', 2)
+
 
 # Custom MQTT message callback
 def customCallback(client, userdata, message):
@@ -26,6 +31,7 @@ def customCallback(client, userdata, message):
             if currentorderid!="":
                 pastservedorderid.append(currentorderid)
             currentorderid=j['orderid']
+            lcd.text(j['orderid'], 2)
     else:
         foodorderid.append(j['orderid'])
     
@@ -45,6 +51,7 @@ def customCallback2(client, userdata, message):
             if currentorderid!="":
                 pastservedorderid.append(currentorderid)
             currentorderid=j['orderid']
+            lcd.text(j['orderid'], 2)
     else:
         drinkorderid.append(j['orderid'])
     
@@ -64,8 +71,8 @@ my_rpi.configureMQTTOperationTimeout(5)  # 5 sec
 
 # Connect and subscribe to AWS IoT
 my_rpi.connect()
-my_rpi.subscribe("orders/foodcompleted", 1, customCallback)
-my_rpi.subscribe("orders/drinkcompleted", 1, customCallback2)
+my_rpi.subscribe("order/foodcompleted", 1, customCallback)
+my_rpi.subscribe("order/drinkcompleted", 1, customCallback2)
 
 
 app = Flask(__name__)
