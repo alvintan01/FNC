@@ -1,7 +1,7 @@
 # FNC
 This application is based on a fast food restaurant scenario which serves as food ordering system. Customers are able to place their orders on a web application and the orders will be displayed on separate web pages based on the food and drink topics. This application will require three Raspberry Pis. The first Raspberry Pi will run as the client facing web application for users to place orders. The second Raspberry Pi will display food orders while the third Raspberry Pi will display drink orders.
 
-This application also has a fire detection system to alert personnels of the temperature situation in the kitchen or drink station through email and the sound of buzzers.
+This application also has a fire detection system to alert personnels of the temperature situation in the kitchen or drink station through email and the sound of buzzers. An admin web application is also included for statistical analysis of the restaurant.
 
 ## Prerequisites
 You will need a AWS Cloud account as well as 3 Raspberry Pi including a RFID reader, 2 buzzers, 2 temperature sensors, 2 buttons and 1 LCD display. The fritzing diagrams for the first, second and third Raspberry Pi are shown below.
