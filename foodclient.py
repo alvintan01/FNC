@@ -79,10 +79,10 @@ def deleteOrder():
         db.close()
         try:
                foodpreparationtime.put_item(
-                   Item={'timestamp':timestamp, 'time':int((datetime.datetime.now()-datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")).total_seconds())}
+                   Item={'timestamp':timestamp, 'time':int((datetime.datetime.now()-datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")).total_seconds())}
                 )
-        except Exception:
-                pass
+        except Exception as e:
+                print e
 		
 button.when_pressed = deleteOrder
 
@@ -144,7 +144,7 @@ def food():
                         timestamp=ordertimestamp
                         currentorderid=orderid
                         timeset = True
-                data.append([orderid,food,foodquantity,sides,sidesquantity, ordertimestamp])
+                data.append([ordertimestamp, food,foodquantity,sides,sidesquantity, orderid])
         curs.close()
         db.close()
         return render_template("food.html", datapython=data)

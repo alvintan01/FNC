@@ -18,33 +18,33 @@ $(document).ready(function() {
 			<table class="display" cellspacing="0" width="100%">
 				<thead>
 				      <tr>
-					<th>Order ID</th>
+					<th>Timestamp</th>
 				        <th>Food</th>
 				        <th>Food Quantity</th>
 				        <th>Sides</th>
 				        <th>Sides Quantity</th>
-				        <th>Timestamp</th>
+				        <th>Order ID</th>
 				      </tr>
 				</thead>
 				<tbody>				
-				{%- for orderid, food, foodquantity, sides, sidequantity, time in datapython %}
+				{%- for timestamp, food, foodquantity, sides, sidequantity, orderid in datapython %}
 				<tr>
-				<td>{{ orderid  }}</td>
-				{% if food !="" %}
+				<td>{{ timestamp  }}</td>
+				{% if food !="N.A." %}
 				<td>{{ food }}</td>
 				<td>{{ foodquantity }}</td>
 				{% else %}
 				<td>N.A.</td>
 				<td>N.A.</td>
 				{% endif %}
-				{% if sides !="" %}
+				{% if sides !="N.A." %}
 				<td>{{ sides }}</td>
 				<td>{{ sidequantity }}</td>
 				{% else %}
 				<td>N.A.</td>
 				<td>N.A.</td>
 				{% endif %}
-				<td>{{ time }}</td>
+				<td>{{ orderid }}</td>
 				</tr>
 				{%- endfor %}
 				</tbody>

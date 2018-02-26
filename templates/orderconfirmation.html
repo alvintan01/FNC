@@ -56,21 +56,21 @@ function validateDrink() {
 				{%- for id, food, foodquantity, sides, sidequantity, drink, drinkquantity, rowid, cost in datapython %}
 				<tr>
 				<td>{{ id }}</td>
-				{% if food !="" %}
+				{% if food !="N.A." %}
 				<td>{{ food }}</td>
 				<td><form action="updateorder" id="updatefood" method="post" onsubmit="return validateFood()"><input type="number" onchange='this.form.submit()' name="foodquantity" min="1" value="{{ foodquantity }}"><input type="hidden" name="rowid" value="{{ rowid }}"><input type="hidden" name="operation" value="updatefoodquantity"></form></td>
 				{% else %}
 				<td>N.A.</td>
 				<td>N.A.</td>
 				{% endif %}
-				{% if sides !="" %}
+				{% if sides !="N.A." %}
 				<td>{{ sides }}</td>
 				<td><form action="updateorder" id="updateside" method="post" onsubmit="return validateSide()"><input type="number" onchange='this.form.submit()' name="sidequantity" min="1" value="{{ sidequantity }}"><input type="hidden" name="rowid" value="{{ rowid }}"><input type="hidden" name="operation" value="updatesidequantity"></form></td>				
 				{% else %}
 				<td>N.A.</td>
 				<td>N.A.</td>
 				{% endif %}
-				{% if drink !="" %}
+				{% if drink !="N.A." %}
 				<td>{{ drink }}</td>
 				<td><form action="updateorder" id="updatedrink" method="post" onsubmit="return validateDrink()"><input type="number" onchange='this.form.submit()' name="drinkquantity" min="1" value="{{ drinkquantity }}"><input type="hidden" name="rowid" value="{{ rowid }}"><input type="hidden" name="operation" value="updatedrinkquantity"></form></td>
 				{% else %}

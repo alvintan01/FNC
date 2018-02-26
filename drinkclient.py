@@ -82,7 +82,7 @@ def deleteOrder():
         curs.close()
         db.close()
         drinkpreparationtime.put_item(
-                Item={'timestamp':timestamp, 'time':int((datetime.datetime.now()-datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")).total_seconds())}
+                Item={'timestamp':timestamp, 'time':int((datetime.datetime.now()-datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")).total_seconds())}
         )
 		
 button.when_pressed = deleteOrder

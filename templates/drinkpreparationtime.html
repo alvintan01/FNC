@@ -19,7 +19,7 @@
 		]);
 
 		var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-		chart.draw(data, {title: 'Average drink preparation time for the day', legend: 'none', hAxis: {title: 'Hour (24Hr Format)'}, vAxis: {baseline: 0, title: 'Time Taken (s)', format: '#'}, colors: ['#A0D100']});
+		chart.draw(data, {title: '{{ datapython[3] }}', legend: 'none', hAxis: {title: 'Hour (24Hr Format)'}, vAxis: {baseline: 0, title: 'Time Taken (s)', format: '#'}, colors: ['#A0D100']});
 	}
 	</script>
 	<script>
@@ -45,9 +45,15 @@
   <li><a href="/logout" id="logout">Logout</a></li>
 </ul>
 </div>
-<a href="/logout" id="logout">Logout</a>
 <div class="container">
-		<h2>Average drink preparation time for the day</h2>
+		<h2>{{ datapython[3] }}</h2>
+		<table>
+		Select date:
+		<form action="/drinkpreparationtime" method="POST">
+			<input type="date" name="date">
+			<input type="submit">
+		</form>
+		</table><br>
 		<div id="chart_div"></div>
 		<div id="centerdiv">
 			<table id="profittable" class="display" cellspacing="0" width="50%">
@@ -61,6 +67,7 @@
 				</tr>
 			{%- endfor %}
 			</table>
+			<h2>Average drink preparation time: {{ datapython[2] }} seconds</h2>
 		</div>
 	</div>
 

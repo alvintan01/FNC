@@ -18,16 +18,16 @@ $(document).ready(function() {
 			<table class="display" cellspacing="0" width="100%">
 				<thead>
 				      <tr>
-					<th>Order ID</th>
+					<th>Timestamp</th>
 				        <th>Drink</th>
 					<th>Quantity</th>
-				        <th>Timestamp</th>
+				        <th>Order ID</th>
 				      </tr>
 				</thead>
 				<tbody>				
-				{%- for orderid, drink, drinkquantity, time in datapython %}
+				{%- for timestamp, drink, drinkquantity, orderid in datapython %}
 				<tr>
-				<td>{{ orderid }}</td><td>{{ drink }}</td><td>{{ drinkquantity }}</td><td>{{ time }}</td>
+				<td>{{ timestamp }}</td><td>{{ drink }}</td><td>{{ drinkquantity }}</td><td>{{ orderid }}</td>
 				</tr>
 				{%- endfor %}
 				</tbody>
