@@ -6,6 +6,7 @@ from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 from rpi_lcd import LCD
 import boto3
 import os
+from time import sleep
 
 machineletter="A"
 host = "a1gshwfs8ne6l4.iot.us-west-2.amazonaws.com"
@@ -32,9 +33,9 @@ drinks = dynamodb.Table('drinks')
 foodlist=[]
 drinkslist=[]
 sideslist=[]
-foodprice={'': 0}
-sideprice={'': 0}
-drinkprice={'': 0}
+foodprice={'N.A.': 0}
+sideprice={'N.A.': 0}
+drinkprice={'N.A.': 0}
 
 #get food
 response = food.scan()
@@ -77,7 +78,7 @@ def selectfood():
         global foodlist
         if 'allorders' not in session:
             session['allorders']=[]
-        session['orders']={'Food':'', 'FoodQuantity':0, 'Sides':'', 'SidesQuantity':0, 'Drink':'', 'DrinkQuantity':0, 'RowID':''}
+        session['orders']={'Food':'N.A.', 'FoodQuantity': 0, 'Sides':'N.A.', 'SidesQuantity': 0, 'Drink':'N.A.', 'DrinkQuantity': 0, 'RowID':''}
         continue_reading=False
         return render_template('order.html', datapython=foodlist)
     except Exception as e:
@@ -90,7 +91,7 @@ def selectfood():
 def selectside():
     try:
         global sideslist
-        session['orders']={'Food':'', 'FoodQuantity':0, 'Sides':'', 'SidesQuantity':0, 'Drink':'', 'DrinkQuantity':0, 'RowID':''}
+        session['orders']={'Food':'N.A.', 'FoodQuantity': 0, 'Sides':'N.A.', 'SidesQuantity': 0, 'Drink':'N.A.', 'DrinkQuantity': 0, 'RowID':''}
         
         if request.method == 'POST':
             if request.form['food']!="":
@@ -111,8 +112,8 @@ def selectdrink():
         if request.method == 'POST':
             session['allorders']=session['allorders']
             session['orders']=session['orders']
-            session['orders']['Sides']=request.form['sides']
             if not request.form['sides']=="":
+                session['orders']['Sides']=request.form['sides']
                 session['orders']['SidesQuantity']=1
             session['orders']['RowID']=len(session['allorders'])
         return render_template('order2.html', datapython=drinkslist)
@@ -126,12 +127,12 @@ def vieworder():
     try:
         if request.method == 'POST':
             session['allorders']=session['allorders']
-            session['orders']=session['orders']
-            session['orders']['Drink']=request.form['drinks']
+            session['orders']=session['orders']            
             if not request.form['drinks']=="":
+                session['orders']['Drink']=request.form['drinks']
                 session['orders']['DrinkQuantity']=1
             session['orders']['RowID']=len(session['allorders'])
-            if not (session['orders']['Food']=="" and session['orders']['Sides']=="" and session['orders']['Drink']==""):
+            if not (session['orders']['Food']=="N.A." and session['orders']['Sides']=="N.A." and session['orders']['Drink']=="N.A."):
                 cost=float(foodprice[session['orders']['Food']]*int(session['orders']['FoodQuantity']))+float(sideprice[session['orders']['Sides']]*int(session['orders']['SidesQuantity']))+float(drinkprice[session['orders']['Drink']]*int(session['orders']['DrinkQuantity']))
                 session['allorders'].append([int(session['orders']['RowID'])+1, session['orders']['Food'],session['orders']['FoodQuantity'],session['orders']['Sides'],session['orders']['SidesQuantity'],session['orders']['Drink'],session['orders']['DrinkQuantity'],session['orders']['RowID'], '{:.2f}'.format(cost)])
                 return render_template('orderconfirmation.html', datapython=session['allorders'])
@@ -212,6 +213,9 @@ def scancard():
                         'profit': a[8]#7 is rowid
                     }
                     my_rpi.publish("order/order", json.dumps(send_msg), 1)
+                    lcd.text('Processing...', 1)
+                    lcd.text('', 2)
+                    sleep(1)
                 orderid=orderid+1
                 session.pop('orders',None)
                 session.pop('allorders',None)
